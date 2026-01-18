@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "unnecessarynested",
+    srcs = ["nested.go"],
+    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/02-unnecessary-nested-code",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "unnecessarynested_test",
+    srcs = ["nested_test.go"],
+    embed = [":unnecessarynested"],
+)

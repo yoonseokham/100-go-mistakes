@@ -60,6 +60,7 @@ bazel run //:gazelle-update-repos
 
 ### Chapter 2: Code and Project Organization
 - [01 - Variable Shadowing](book/ch02-code-project-organization/01-variable-shadowing/) - Avoiding unintended variable shadowing
+- [02 - Unnecessary Nested Code](book/ch02-code-project-organization/02-unnecessary-nested-code/) - Using early returns and keeping happy path left-aligned
 
 ## Bazel Build Rules
 
