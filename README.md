@@ -63,6 +63,7 @@ bazel run //:gazelle-update-repos
 - [02 - Unnecessary Nested Code](book/ch02-code-project-organization/02-unnecessary-nested-code/) - Using early returns and keeping happy path left-aligned
 - [03 - Misusing Init Functions](book/ch02-code-project-organization/03-misusing-init-functions/) - Understanding init() problems and using explicit initialization
 - [04 - Overusing Getters and Setters](book/ch02-code-project-organization/04-overusing-getters-setters/) - Being pragmatic about encapsulation in Go
+- [05 - Interface Pollution](book/ch02-code-project-organization/05-interface-pollution/) - Discovering abstractions instead of creating them
 
 ## Bazel Build Rules
 
