@@ -1,0 +1,14 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "misuinginit",
+    srcs = ["init.go"],
+    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/03-misusing-init-functions",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "misuinginit_test",
+    srcs = ["init_test.go"],
+    embed = [":misuinginit"],
+)
