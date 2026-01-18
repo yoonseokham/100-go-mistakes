@@ -66,6 +66,7 @@ bazel run //:gazelle-update-repos
 - [05 - Interface Pollution](book/ch02-code-project-organization/05-interface-pollution/) - Discovering abstractions instead of creating them
 - [06 - Interface on the Producer Side](book/ch02-code-project-organization/06-interface-producer-side/) - Keeping interfaces on the client side
 - [07 - Returning Interfaces](book/ch02-code-project-organization/07-returning-interfaces/) - Returning concrete types, accepting interfaces
+- [08 - Any Says Nothing](book/ch02-code-project-organization/08-any-says-nothing/) - Using specific types instead of any for type safety
 
 ## Bazel Build Rules
 
