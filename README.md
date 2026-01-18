@@ -68,6 +68,7 @@ bazel run //:gazelle-update-repos
 - [07 - Returning Interfaces](book/ch02-code-project-organization/07-returning-interfaces/) - Returning concrete types, accepting interfaces
 - [08 - Any Says Nothing](book/ch02-code-project-organization/08-any-says-nothing/) - Using specific types instead of any for type safety
 - [09 - Being Confused About When to Use Generics](book/ch02-code-project-organization/09-being-confused-about-when-to-use-generics/) - Using generics appropriately to reduce boilerplate without adding complexity
+- [10 - Type Embedding Problems](book/ch02-code-project-organization/10-type-embedding-problems/) - Understanding visibility issues with type embedding
 
 ## Bazel Build Rules
 
