@@ -82,7 +82,7 @@ func main() {
 	inMemBad.Unlock() // ❌ This shouldn't be accessible!
 
 	// Good InMem - Lock/Unlock not accessible
-	inMemGood := NewInMemGood()
+	// inMemGood := NewInMemGood()
 	// inMemGood.Lock() // ✅ Compilation error - mu is private
 
 	// Bad Logger - requires forwarding methods
@@ -93,5 +93,5 @@ func main() {
 	// Good Logger - methods promoted, no forwarding needed
 	loggerGood := LoggerGood{WriteCloser: os.Stdout}
 	_, _ = loggerGood.Write([]byte("bar")) // Write() promoted
-	_ = loggerGood.Close()                  // Close() promoted
+	_ = loggerGood.Close()                 // Close() promoted
 }
