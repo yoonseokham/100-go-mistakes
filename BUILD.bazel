@@ -1,6 +1,6 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 
-# gazelle:prefix github.com/yourusername/go-100-mistakes
+# gazelle:prefix github.com/yourusername/100-go-mistakes
 gazelle(name = "gazelle")
 
 gazelle(

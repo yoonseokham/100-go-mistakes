@@ -6,7 +6,7 @@ go_library(
         "client.go",
         "reporter.go",
     ],
-    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/06-interface-producer-side/client",
+    importpath = "github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/06-interface-producer-side/client",
     visibility = ["//visibility:public"],
     deps = ["//book/ch02-code-project-organization/06-interface-producer-side/store"],
 )

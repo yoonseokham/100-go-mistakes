@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store"
+	"github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store"
 )
 
 // Mock implementation - only implements what Client needs

@@ -1,3 +1,3 @@
-module github.com/yourusername/go-100-mistakes
+module github.com/yourusername/100-go-mistakes
 
 go 1.22

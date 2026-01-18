@@ -9,6 +9,6 @@ go_library(
         "good_example_consumer.go",
         "restricting_example.go",
     ],
-    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/05-interface-pollution",
+    importpath = "github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/05-interface-pollution",
     visibility = ["//visibility:public"],
 )

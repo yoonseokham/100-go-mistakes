@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/03-misusing-init-functions/redis"
+	"github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/03-misusing-init-functions/redis"
 )
 
 // Multiple init functions in same file execute in order

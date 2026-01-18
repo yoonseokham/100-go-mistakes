@@ -6,6 +6,6 @@ go_library(
         "bad_store.go",
         "store.go",
     ],
-    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store",
+    importpath = "github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store",
     visibility = ["//visibility:public"],
 )

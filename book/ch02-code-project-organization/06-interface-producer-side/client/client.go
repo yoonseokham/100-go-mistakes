@@ -1,6 +1,6 @@
 package client
 
-import "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store"
+import "github.com/yourusername/100-go-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store"
 
 // Good Example: Consumer defines small, focused interface
 
