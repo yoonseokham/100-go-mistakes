@@ -1,0 +1,11 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "store",
+    srcs = [
+        "bad_store.go",
+        "store.go",
+    ],
+    importpath = "github.com/yourusername/go-100-mistakes/book/ch02-code-project-organization/06-interface-producer-side/store",
+    visibility = ["//visibility:public"],
+)

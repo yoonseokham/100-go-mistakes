@@ -64,6 +64,7 @@ bazel run //:gazelle-update-repos
 - [03 - Misusing Init Functions](book/ch02-code-project-organization/03-misusing-init-functions/) - Understanding init() problems and using explicit initialization
 - [04 - Overusing Getters and Setters](book/ch02-code-project-organization/04-overusing-getters-setters/) - Being pragmatic about encapsulation in Go
 - [05 - Interface Pollution](book/ch02-code-project-organization/05-interface-pollution/) - Discovering abstractions instead of creating them
+- [06 - Interface on the Producer Side](book/ch02-code-project-organization/06-interface-producer-side/) - Keeping interfaces on the client side
 
 ## Bazel Build Rules
 
