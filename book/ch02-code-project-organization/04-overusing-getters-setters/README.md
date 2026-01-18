@@ -83,6 +83,58 @@ We should be pragmatic and strive to find the **right balance** between:
 
 Remember that Go is a **unique language** designed for many characteristics, including **simplicity**.
 
+## Go Naming Conventions for Getters and Setters
+
+If you do need to use getters and setters, follow Go's naming conventions:
+
+### Getter Naming: Omit "Get" Prefix
+
+```go
+type Account struct {
+    balance float64
+}
+
+// Good: Balance, not GetBalance
+func (a *Account) Balance() float64 {
+    return a.balance
+}
+
+// Bad: Don't use "Get" prefix
+func (a *Account) GetBalance() float64 {  // ❌
+    return a.balance
+}
+```
+
+### Setter Naming: Use "Set" Prefix
+
+```go
+// Good: SetBalance
+func (a *Account) SetBalance(balance float64) {
+    a.balance = balance
+}
+```
+
+### Example
+
+```go
+type Account struct {
+    balance float64
+}
+
+func (a *Account) Balance() float64 {        // Getter: no "Get"
+    return a.balance
+}
+
+func (a *Account) SetBalance(balance float64) {  // Setter: use "Set"
+    a.balance = balance
+}
+
+// Usage
+account := &Account{}
+account.SetBalance(100.0)
+fmt.Println(account.Balance())  // 100.0
+```
+
 ## When to Use Getters and Setters
 
 However, if we find a **need** for getters and setters or, as mentioned, **foresee a future need** while guaranteeing **forward compatibility**, there's nothing wrong with using them.
