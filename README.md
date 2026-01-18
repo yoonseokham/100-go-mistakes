@@ -17,14 +17,8 @@ brew install bazelisk
 # Build all targets
 bazel build //...
 
-# Build specific example
-bazel build //examples/mistake01:example
-```
-
-### Run
-```bash
-# Run binary
-bazel run //examples/mistake01:example
+# Build specific chapter
+bazel build //book/ch02-code-project-organization/01-variable-shadowing:variableshadowing
 ```
 
 ### Test
@@ -33,7 +27,7 @@ bazel run //examples/mistake01:example
 bazel test //...
 
 # Run specific test
-bazel test //examples/mistake01:mistake01_test
+bazel test //book/ch02-code-project-organization/01-variable-shadowing:variableshadowing_test
 ```
 
 ### Gazelle (Auto-generate BUILD files)
@@ -53,13 +47,19 @@ bazel run //:gazelle-update-repos
 ├── BUILD.bazel           # Root BUILD file
 ├── go.mod                # Go module definition
 ├── .bazelrc              # Bazel configuration
-└── examples/
-    └── mistake01/
-        ├── BUILD.bazel   # Example-specific build rules
-        ├── lib.go        # Library code
-        ├── lib_test.go   # Test code
-        └── main.go       # Executable example
+└── book/
+    └── ch02-code-project-organization/
+        └── 01-variable-shadowing/
+            ├── BUILD.bazel      # Build rules
+            ├── shadowing.go     # Example code
+            ├── shadowing_test.go # Tests
+            └── README.md        # Chapter notes
 ```
+
+## Chapters
+
+### Chapter 2: Code and Project Organization
+- [01 - Variable Shadowing](book/ch02-code-project-organization/01-variable-shadowing/) - Avoiding unintended variable shadowing
 
 ## Bazel Build Rules
 
