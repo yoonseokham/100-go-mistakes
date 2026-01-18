@@ -62,6 +62,7 @@ bazel run //:gazelle-update-repos
 - [01 - Variable Shadowing](book/ch02-code-project-organization/01-variable-shadowing/) - Avoiding unintended variable shadowing
 - [02 - Unnecessary Nested Code](book/ch02-code-project-organization/02-unnecessary-nested-code/) - Using early returns and keeping happy path left-aligned
 - [03 - Misusing Init Functions](book/ch02-code-project-organization/03-misusing-init-functions/) - Understanding init() problems and using explicit initialization
+- [04 - Overusing Getters and Setters](book/ch02-code-project-organization/04-overusing-getters-setters/) - Being pragmatic about encapsulation in Go
 
 ## Bazel Build Rules
 
