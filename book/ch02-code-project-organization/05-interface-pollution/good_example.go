@@ -1,31 +1,43 @@
 package interfacepollution
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 // Good Example: Start with Concrete Type
 // Define interface only when needed (discovered, not created)
 
 // Step 1: Concrete implementation
-type UserService struct {
+type ConcreteUserService struct {
 	db *sql.DB
 }
 
-func NewUserService(db *sql.DB) *UserService {
-	return &UserService{db: db}
+func NewConcreteUserService(db *sql.DB) *ConcreteUserService {
+	return &ConcreteUserService{db: db}
 }
 
-func (s *UserService) CreateUser(name string) error {
+func (s *ConcreteUserService) CreateUser(name string) error {
+	if s.db == nil {
+		return fmt.Errorf("database not initialized")
+	}
 	_, err := s.db.Exec("INSERT INTO users (name) VALUES (?)", name)
 	return err
 }
 
-func (s *UserService) GetUser(id int) (string, error) {
+func (s *ConcreteUserService) GetUser(id int) (string, error) {
+	if s.db == nil {
+		return "", fmt.Errorf("database not initialized")
+	}
 	var name string
 	err := s.db.QueryRow("SELECT name FROM users WHERE id = ?", id).Scan(&name)
 	return name, err
 }
 
-func (s *UserService) DeleteUser(id int) error {
+func (s *ConcreteUserService) DeleteUser(id int) error {
+	if s.db == nil {
+		return fmt.Errorf("database not initialized")
+	}
 	_, err := s.db.Exec("DELETE FROM users WHERE id = ?", id)
 	return err
 }
