@@ -259,11 +259,6 @@ func (c *Cache) Get(key string) (any, bool) {
     val, ok := c.data[key]
     return val, ok
 }
-
-// But consider using generics instead (Go 1.18+)
-type Cache[T any] struct {
-    data map[string]T
-}
 ```
 
 #### 4. Configuration/Plugin Systems
@@ -314,39 +309,12 @@ func (s *Store) SetContract(id string, contract Contract) error
 // Yes, more code, but much safer and clearer
 ```
 
-### Using Generics (Go 1.18+)
-
-If you have true duplication, consider generics instead of `any`:
-
-```go
-// ✅ BETTER: Generics provide type safety without duplication
-type Store[T any] struct {
-    data map[string]T
-}
-
-func (s *Store[T]) Get(id string) (T, error) {
-    // Implementation
-}
-
-func (s *Store[T]) Set(id string, value T) error {
-    // Implementation
-}
-
-// Usage with type safety
-customerStore := &Store[Customer]{}
-customerStore.Set("123", Customer{})  // ✅ Type-safe
-
-contractStore := &Store[Contract]{}
-contractStore.Set("456", Contract{})  // ✅ Type-safe
-```
-
 ## Key Principles
 
 1. **`any` says nothing** - It provides no information about what type to expect
 2. **Prefer specific types** - Even if it means some duplication
 3. **Type safety matters** - Compile-time errors are better than runtime panics
 4. **Use `any` sparingly** - Only when truly necessary
-5. **Consider generics** - For type-safe reusable code
 
 ## Comparison
 
