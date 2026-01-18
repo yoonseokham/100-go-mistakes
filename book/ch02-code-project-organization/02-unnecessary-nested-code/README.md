@@ -2,43 +2,78 @@
 
 ## Problem
 
-Deep nesting makes code hard to read and maintain. It increases cognitive load and makes the happy path unclear.
+Deep nesting with unnecessary `else` blocks makes code hard to read and maintain. Each level of nesting increases cognitive load.
+
+### Bad Example: Deep Nesting with Else
 
 ```go
-// Bad: Deep nesting
-if data != nil {
-    if val, ok := data["user"]; ok {
-        if user, ok := val.(map[string]interface{}); ok {
-            if name, ok := user["name"]; ok {
-                // ... more nesting
+func join1(s1, s2 string, max int) (string, error) {
+    if s1 == "" {
+        return "", errors.New("s1 is empty")
+    } else {
+        if s2 == "" {
+            return "", errors.New("s2 is empty")
+        } else {
+            concat, err := concatenate(s1, s2)
+            if err != nil {
+                return "", err
+            } else {
+                if len(concat) > max {
+                    return concat[:max], nil
+                } else {
+                    return concat, nil
+                }
             }
         }
     }
 }
 ```
 
-## Solutions
+**Problems:**
+- Deep nesting (4 levels)
+- Unnecessary `else` blocks after `return`
+- Happy path buried deep inside
+- Hard to follow logic flow
 
-### 1. Use Early Returns
+## Solution: Early Returns and Flat Structure
 
-Return early for error cases, keeping the happy path aligned to the left:
+### Good Example: Early Returns, No Else
 
 ```go
-// Good: Early returns, happy path on left
-if data == nil {
-    return "", errors.New("data is nil")
+func join2(s1, s2 string, max int) (string, error) {
+    if s1 == "" {
+        return "", errors.New("s1 is empty")
+    }
+    if s2 == "" {
+        return "", errors.New("s2 is empty")
+    }
+    concat, err := concatenate(s1, s2)
+    if err != nil {
+        return "", err
+    }
+    if len(concat) > max {
+        return concat[:max], nil
+    }
+    return concat, nil
 }
-
-val, ok := data["user"]
-if !ok {
-    return "", errors.New("user field not found")
-}
-
-// Happy path continues...
-return nameStr, nil
 ```
 
-### 2. Use Continue in Loops
+**Benefits:**
+- Flat structure (no nesting)
+- No unnecessary `else` blocks
+- Happy path clearly visible at the end
+- Easy to read and understand
+
+## Key Principles
+
+1. **Use early returns**: Return immediately when error conditions are met
+2. **Eliminate else after return**: When you return in an `if` block, `else` is never needed
+3. **Happy path on the left**: Main logic should be left-aligned and at the bottom
+4. **Guard clauses first**: Validate inputs at the top with early returns
+
+## Additional Patterns
+
+### Use Continue in Loops
 
 For loops, use `continue` to skip invalid items early:
 
@@ -47,40 +82,37 @@ for _, user := range users {
     if user == nil {
         continue
     }
-
     if !isActive(user) {
         continue
     }
-
     // Process valid user
 }
 ```
 
-### 3. Eliminate Unnecessary Else
-
-When using early returns, `else` blocks become unnecessary:
+### Avoid Deep Nesting in Validation
 
 ```go
-// Bad: Unnecessary else
-if value > 0 {
-    return "positive"
-} else {
-    return "negative"
+// Bad: nested validation
+if valid {
+    if authorized {
+        if hasPermission {
+            // do something
+        }
+    }
 }
 
-// Good: No else needed
-if value > 0 {
-    return "positive"
+// Good: early returns
+if !valid {
+    return errors.New("invalid")
 }
-return "negative"
+if !authorized {
+    return errors.New("unauthorized")
+}
+if !hasPermission {
+    return errors.New("no permission")
+}
+// do something
 ```
-
-## Key Principles
-
-1. **Happy path on the left**: Main logic should be left-aligned
-2. **Error cases in if blocks**: Handle errors early with returns
-3. **Minimize nesting depth**: Keep code flat and readable
-4. **Avoid else after return**: Early returns make else unnecessary
 
 ## Run Tests
 
