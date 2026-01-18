@@ -1,193 +1,174 @@
-# Misusing init Functions
+# Misusing Init Functions
 
-## Go Package Initialization Order
+## TL;DR
+When initializing variables, remember that init functions have limited error handling and make state handling and testing more complex. In most cases, initializations should be handled as specific functions.
 
-Understanding the initialization order is crucial:
+## What is an Init Function?
 
+An init function is used to initialize the state of an application. It:
+- Takes no arguments and returns no result (`func()` signature)
+- Executes automatically when a package is initialized
+- Runs before the `main()` function
+
+### Execution Order
+
+When a package is initialized:
+1. All constant and variable declarations are evaluated
+2. All `init()` functions execute (in declaration order)
+3. Then `main()` runs (if it's the main package)
+
+If multiple `init()` functions exist:
+- They execute in the order they appear in the source file
+- Across multiple files, they execute in file name alphabetical order
+
+## Example
+
+### Execution Order Demo
+
+**redis/redis.go:**
+```go
+func init() {
+    fmt.Println("Initializing redis cache...")
+    cache = make(map[string]string)
+}
 ```
-package A imports B, C
 
-Initialization order:
-1. B's global variables
-2. B's init() functions
-3. C's global variables
-4. C's init() functions
-5. A's global variables
-6. A's init() functions
-7. A's main() function (if main package)
+**main/main.go:**
+```go
+func init() {
+    fmt.Println("init 1")
+}
+
+func init() {
+    fmt.Println("init 2")
+}
+
+func main() {
+    fmt.Println("Starting main...")
+    redis.Store("foo", "bar")
+}
 ```
 
-Within a package:
-- Global variables are initialized in declaration order (respecting dependencies)
-- `init()` functions run after all variables are initialized
-- Multiple `init()` functions in the same package run in source file name order
-- Multiple `init()` in the same file run in declaration order
+**Output:**
+```
+Initializing redis cache...
+init 1
+init 2
+Starting main...
+Stored: foo = bar
+```
 
-## Problems with init()
+## Problems with Init Functions
 
-### Problem 1: Cannot Return Errors
+### 1. Limited Error Management
+
+Init functions cannot return errors. Your only options are:
+- Panic (stops the entire application)
+- Ignore the error (leaves invalid state)
 
 ```go
-var db *sql.DB
-
 func init() {
     var err error
     db, err = sql.Open("postgres", "connection-string")
     if err != nil {
-        // Only options: panic or ignore
-        panic(err)  // Makes testing hard
+        panic(err)  // Only option: panic or ignore
     }
 }
 ```
 
-**Issues:**
-- No way to gracefully handle errors
-- Must panic or leave invalid state
-- Cannot retry or provide fallback
+### 2. Testing Complications
 
-### Problem 2: Hard to Test
+- Init functions run automatically before tests
+- Cannot mock or control initialization
+- Must set up external dependencies even for unit tests that don't need them
+- Cannot create isolated test instances
 
 ```go
-var globalCache map[string]string
-
-func init() {
-    globalCache = make(map[string]string)
-    loadCacheFromFile()  // Runs on import!
+// Bad: Testing depends on init() side effects
+func TestStore(t *testing.T) {
+    // Relies on init() having run successfully
+    redis.Store("key", "value")
 }
 ```
 
-**Issues:**
-- Runs automatically on package import
-- Cannot mock or control in tests
-- Cannot inject dependencies
-- Increases test startup time
+### 3. Global State Requirement
 
-### Problem 3: Order Dependencies
+If initialization requires state, you must use global variables:
 
 ```go
-var config Config
-var client *Client
+var cache map[string]string  // Global variable
 
 func init() {
-    config = loadConfig()
-}
-
-func init() {
-    // Might run before config is loaded!
-    client = NewClient(config)
+    cache = make(map[string]string)  // Sets global state
 }
 ```
 
-**Issues:**
-- Order across files is not guaranteed
-- Leads to subtle, hard-to-debug issues
-- Fragile when refactoring
+This creates:
+- Unexpected behavior across codebase
+- Difficult unit testing
+- Hard-to-reason-about code
 
-## Solutions: Explicit Initialization
+## Solution: Explicit Initialization
 
-### Solution 1: Constructor with Error Handling
-
-```go
-type Database struct {
-    conn *sql.DB
-}
-
-func NewDatabase(connectionString string) (*Database, error) {
-    conn, err := sql.Open("postgres", connectionString)
-    if err != nil {
-        return nil, fmt.Errorf("failed to open database: %w", err)
-    }
-    return &Database{conn: conn}, nil
-}
-```
-
-**Benefits:**
-- Can return errors properly
-- Easy to test with different inputs
-- Explicit about when initialization happens
-
-### Solution 2: Lazy Initialization
+### Good Example: Constructor Pattern
 
 ```go
 type Cache struct {
     data map[string]string
 }
 
-func NewCache() *Cache {
+func NewCache() (*Cache, error) {
+    // Can return error if initialization fails
     return &Cache{
         data: make(map[string]string),
-    }
+    }, nil
 }
 
-func (c *Cache) Load() error {
-    // Load when needed, not at package init
+func (c *Cache) Store(key, value string) error {
+    c.data[key] = value
     return nil
 }
 ```
 
 **Benefits:**
-- Delays expensive operations
-- Only initializes what's actually used
-- Can handle errors at call site
+- Proper error handling
+- Easy to test with multiple instances
+- No global state
+- Explicit initialization timing
+- Can inject dependencies
 
-### Solution 3: Dependency Injection
+### Testing is Easy
 
 ```go
-type Service struct {
-    db     *Database
-    cache  *Cache
-    client *Client
-}
-
-func NewService(dbConnStr string, config Config) (*Service, error) {
-    db, err := NewDatabase(dbConnStr)
+func TestCache(t *testing.T) {
+    // Create fresh, isolated instance
+    cache, err := NewCache()
     if err != nil {
-        return nil, err
+        t.Fatalf("NewCache failed: %v", err)
     }
 
-    cache := NewCache()
-    client := NewClient(config)
-
-    return &Service{
-        db:     db,
-        cache:  cache,
-        client: client,
-    }, nil
+    // Test with controlled state
+    cache.Store("key", "value")
 }
 ```
 
-**Benefits:**
-- Clear dependency chain
-- Easy to test with mocks
-- Explicit initialization order
-- Proper error handling
-
-## When init() IS Appropriate
+## When Init Functions ARE Appropriate
 
 Use `init()` only for:
 
-1. **Registering with registries:**
-```go
-func init() {
-    sql.Register("mydriver", &MyDriver{})
-}
-```
+1. **Static configuration** - No errors possible
+2. **Registry registration** - e.g., database drivers
+3. **Constant data setup** - Deterministic, no side effects
 
-2. **Setting up constant, deterministic data:**
 ```go
-var supportedFormats map[string]bool
+var supportedFormats = map[string]bool{}
 
 func init() {
-    supportedFormats = map[string]bool{
-        "json": true,
-        "xml":  true,
-    }
+    // OK: Simple, deterministic, no errors
+    supportedFormats["json"] = true
+    supportedFormats["xml"] = true
 }
 ```
-
-3. **No error handling needed**
-4. **No external dependencies or I/O**
-5. **Truly one-time setup**
 
 ## Key Principles
 
@@ -196,10 +177,18 @@ func init() {
 - ❌ Don't use `init()` when you need dependency injection
 - ✅ Use explicit constructors that return errors
 - ✅ Use dependency injection for testability
-- ✅ Initialize only when needed (lazy initialization)
+- ✅ Make initialization explicit and controllable
 
-## Run Tests
+## Run Example
 
 ```bash
-bazel test //book/ch02-code-project-organization/03-misusing-init-functions:misuinginit_test
+# Run the demo
+bazel run //book/ch02-code-project-organization/03-misusing-init-functions/main
+
+# Run tests
+bazel test //book/ch02-code-project-organization/03-misusing-init-functions/redis:redis_test
 ```
+
+## Conclusion
+
+**Be cautious with init functions.** They can be helpful in some situations, such as defining static configuration. Otherwise, and in most cases, you should handle initializations through ad hoc functions.
